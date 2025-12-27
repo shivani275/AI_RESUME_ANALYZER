@@ -1,3 +1,59 @@
-*.pyc
+# ==============================
+# Python
+# ==============================
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyd
+
+# ==============================
+# Virtual Environment
+# ==============================
+venv/
+env/
+ENV/
+.venv/
+.pyenv/
+
+# ==============================
+# Editor & OS Files
+# ==============================
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ==============================
+# Build / Distribution
+# ==============================
+build/
+dist/
+*.egg-info/
+
+# ==============================
+# Logs and temp files
+# ==============================
+*.log
+*.tmp
+
+# ==============================
+# Jupyter Notebooks checkpoints
+# ==============================
+.ipynb_checkpoints/
+
+# ==============================
+# PDF Reports (if generated locally)
+# ==============================
+resume_report.pdf
+
+# ==============================
+# Optional: Ignore local settings
+# ==============================
 .env

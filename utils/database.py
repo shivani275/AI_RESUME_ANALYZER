@@ -1,54 +1,75 @@
+# utils/database.py
+
 import sqlite3
 import json
+from pathlib import Path
+from typing import List, Tuple, Optional
 
-DB_NAME = "results.db"
+DB_PATH = Path("resume_analyzer.db")
 
-def init_db():
-    """Initialize the SQLite database and create or update the results table."""
-    with sqlite3.connect(DB_NAME) as conn:
-        c = conn.cursor()
 
-        # Create table if it doesn't exist
-        c.execute("""
-            CREATE TABLE IF NOT EXISTS results (
-                id INTEGER PRIMARY KEY AUTOINCREMENT
+def init_db() -> None:
+    """Initialize SQLite database with the results table."""
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            c = conn.cursor()
+            c.execute("""
+                CREATE TABLE IF NOT EXISTS results (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    candidate_name TEXT,
+                    job_description TEXT,
+                    score INTEGER,
+                    matched_skills TEXT,
+                    missing_skills TEXT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            conn.commit()
+    except sqlite3.Error as e:
+        print(f"[ERROR] Failed to initialize database: {e}")
+
+
+def save_result(
+    candidate_name: str = "Candidate",
+    resume_text: str = "",
+    job_description: str = "",
+    score: int = 0,
+    matched_skills: Optional[List[str]] = None,
+    missing_skills: Optional[List[str]] = None
+) -> None:
+    """Save ATS analysis result to the database."""
+    matched_skills = matched_skills or []
+    missing_skills = missing_skills or []
+
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            c = conn.cursor()
+            c.execute("""
+                INSERT INTO results (candidate_name, job_description, score, matched_skills, missing_skills)
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                candidate_name,
+                job_description,
+                score,
+                json.dumps(matched_skills),
+                json.dumps(missing_skills)
+            ))
+            conn.commit()
+    except sqlite3.Error as e:
+        print(f"[ERROR] Failed to save result: {e}")
+
+
+def fetch_results(limit: int = 10) -> List[Tuple]:
+    """Fetch past analysis results from the database."""
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            c = conn.cursor()
+            c.execute(
+                "SELECT * FROM results ORDER BY timestamp DESC LIMIT ?",
+                (limit,)
             )
-        """)
-
-        # Helper function to add column if missing
-        def add_column_if_missing(column_name, column_type="TEXT"):
-            c.execute(f"PRAGMA table_info(results)")
-            columns = [info[1] for info in c.fetchall()]
-            if column_name not in columns:
-                c.execute(f"ALTER TABLE results ADD COLUMN {column_name} {column_type}")
-
-        # Ensure all required columns exist
-        add_column_if_missing("resume_text", "TEXT")
-        add_column_if_missing("job_description", "TEXT")
-        add_column_if_missing("score", "REAL")
-        add_column_if_missing("matched_skills", "TEXT")
-        add_column_if_missing("missing_skills", "TEXT")
-
-        conn.commit()
-
-
-def save_result(resume_text, job_description, score, matched_skills=None, missing_skills=None):
-    """Save a resume analysis result to the database."""
-    matched_json = json.dumps(matched_skills or [])
-    missing_json = json.dumps(missing_skills or [])
-    with sqlite3.connect(DB_NAME) as conn:
-        c = conn.cursor()
-        c.execute("""
-            INSERT INTO results (resume_text, job_description, score, matched_skills, missing_skills)
-            VALUES (?, ?, ?, ?, ?)
-        """, (resume_text, job_description, score, matched_json, missing_json))
-        conn.commit()
-
-
-def fetch_results(limit=10):
-    """Fetch last `limit` results from the database."""
-    with sqlite3.connect(DB_NAME) as conn:
-        c = conn.cursor()
-        c.execute("SELECT * FROM results ORDER BY id DESC LIMIT ?", (limit,))
-        rows = c.fetchall()
-    return rows
+            rows = c.fetchall()
+        return rows
+    except sqlite3.Error as e:
+        print(f"[ERROR] Failed to fetch results: {e}")
+        return []

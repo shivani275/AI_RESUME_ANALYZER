@@ -1,32 +1,101 @@
 # resume_analyzer/main.py
 
-from resume_analyzer.utils import parser, validator
+"""
+CLI entry point for testing core Resume Analyzer logic
+(without Streamlit UI).
+
+Useful for:
+- Debugging
+- Unit testing
+- Validating core logic
+"""
+
+from pathlib import Path
+from resume_analyzer.utils import analyze_resume
+
 
 def main():
-    """
-    Entry point for the Resume Analyzer project.
-    """
-    resume_path = "sample_resume.txt"  # Replace with your resume file
+    resume_file_path = Path("examples/sample_resume.pdf")
+    job_description_path = Path("examples/sample_jd.txt")
 
-    # Step 1: Parse the resume
+    print("📄 Running Resume Analyzer (CLI mode)\n")
+
+    if not resume_file_path.exists():
+        print("❌ Resume file not found:", resume_file_path)
+        return
+
+    if not job_description_path.exists():
+        print("❌ Job description file not found:", job_description_path)
+        return
+
     try:
-        resume_data = parser.parse_resume(resume_path)
-        print("Resume parsed successfully!")
-        print(resume_data)
+        # Read Job Description
+        job_description = job_description_path.read_text(encoding="utf-8")
+
+        # Open resume as binary (same as Streamlit uploader)
+        with resume_file_path.open("rb") as resume_file:
+            result = analyze_resume(
+                resume_file=resume_file,
+                job_description=job_description,
+                candidate_name="CLI Candidate"
+            )
+
+        if not result:
+            print("❌ Analysis failed. No result returned.")
+            return
+
+        # ---------------------------
+        # Output Results
+        # ---------------------------
+        print(f"\n✅ Match Score: {result.get('match_score', 0)}%")
+        print(f"💪 Resume Strength: {result.get('resume_strength', 0)}%\n")
+
+        # Matched Skills
+        matched_skills = result.get("matched_skills", [])
+        print("🧠 Matched Skills:")
+        if matched_skills:
+            for skill in matched_skills:
+                print(f"  ✔ {skill}")
+        else:
+            print("  None")
+
+        # Missing Skills
+        missing_skills = result.get("missing_skills", [])
+        print("\n❌ Missing Skills:")
+        if missing_skills:
+            for skill in missing_skills:
+                print(f"  ✖ {skill}")
+        else:
+            print("  None")
+
+        # Resume Sections
+        sections = result.get("sections", {})
+        print("\n📌 Resume Sections:")
+        if sections:
+            for section, present in sections.items():
+                status = "✔" if present else "✖"
+                print(f"  {status} {section.title()}")
+        else:
+            print("  No sections detected")
+
+        # Feedback
+        feedback = result.get("feedback", [])
+        print("\n🛠 Feedback:")
+        if feedback:
+            for tip in feedback:
+                print(f"  • {tip}")
+        else:
+            print("  No feedback generated")
+
+        # PDF report
+        pdf_path = result.get("pdf_path")
+        if pdf_path:
+            print(f"\n📄 PDF Report Generated: {pdf_path}")
+        else:
+            print("\n❌ PDF report not generated")
+
     except Exception as e:
-        print(f"Error parsing resume: {e}")
-        return
-
-    # Step 2: Validate the resume data
-    if validator.validate_resume(resume_data):
-        print("Resume is valid.")
-    else:
-        print("Resume is invalid.")
-        return
-
-    # Step 3: Analyze (example)
-    skills_count = len(resume_data.get("skills", []))
-    print(f"Number of skills found: {skills_count}")
+        print(f"\n❌ Error running analyzer: {e}")
 
 
 if __name__ == "__main__":

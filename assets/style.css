@@ -1,0 +1,263 @@
+/* ===============================
+   Root Variables (Theme)
+================================= */
+:root {
+    --bg-main: #f8fafc;
+    --bg-gradient: linear-gradient(135deg, #eef2ff, #f8fafc);
+    --card-bg: #ffffff;
+
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --accent: #22c55e;
+    --danger: #ef4444;
+
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-soft: #e5e7eb;
+}
+
+/* ===============================
+   Global Styles
+================================= */
+
+html, body {
+    background: var(--bg-gradient);
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, sans-serif;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+}
+
+/* ===============================
+   Main Container
+================================= */
+
+.main {
+    background: var(--card-bg);
+    padding: 2.25rem 2.75rem;
+    border-radius: 20px;
+    box-shadow:
+        0 20px 40px rgba(15, 23, 42, 0.08),
+        0 5px 15px rgba(15, 23, 42, 0.05);
+    margin-top: 2rem;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===============================
+   Headings & Text
+================================= */
+
+h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-top: 2rem;
+}
+
+h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+/* ===============================
+   Score Cards
+================================= */
+
+.score-card {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    padding: 2rem;
+    border-radius: 18px;
+    text-align: center;
+    margin: 2rem 0;
+    box-shadow: 0 15px 30px rgba(79, 70, 229, 0.35);
+    transition: transform 0.25s ease;
+}
+
+.score-card:hover {
+    transform: translateY(-4px);
+}
+
+.score-card h1 {
+    font-size: 3.2rem;
+    font-weight: 900;
+    margin: 0;
+}
+
+.score-card p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* ===============================
+   Skill Pills
+================================= */
+
+.skill-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    margin: 6px 8px 6px 0;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #3730a3;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid #e0e7ff;
+    transition: all 0.2s ease;
+}
+
+.skill-pill:hover {
+    transform: scale(1.05);
+}
+
+.skill-pill.missing {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+/* ===============================
+   Feedback Boxes
+================================= */
+
+.feedback {
+    background: #f8fafc;
+    border-left: 5px solid var(--primary);
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.feedback.missing {
+    border-left-color: var(--danger);
+}
+
+/* ===============================
+   Sections
+================================= */
+
+.section {
+    margin-top: 2.5rem;
+}
+
+/* ===============================
+   Sidebar
+================================= */
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #f8fafc, #eef2ff);
+    border-right: 1px solid var(--border-soft);
+}
+
+.sidebar-card {
+    background: white;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+
+.sidebar-card strong {
+    font-size: 0.9rem;
+}
+
+.sidebar-card small {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ===============================
+   Buttons
+================================= */
+
+.stButton > button {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 14px;
+    height: 50px;
+    width: 100%;
+    border: none;
+    transition: all 0.25s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+}
+
+.stButton > button:disabled {
+    background: #a5b4fc;
+}
+
+/* ===============================
+   Inputs
+================================= */
+
+.stTextArea textarea {
+    font-size: 0.9rem;
+    border-radius: 12px;
+}
+
+.stFileUploader {
+    border: 2px dashed #c7d2fe;
+    border-radius: 16px;
+    padding: 14px;
+}
+
+/* ===============================
+   Charts
+================================= */
+
+.js-plotly-plot {
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* ===============================
+   Download Button
+================================= */
+
+.stDownloadButton > button {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-radius: 14px;
+}
+
+.stDownloadButton > button:hover {
+    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.35);
+}
+
+/* ===============================
+   Responsive
+================================= */
+
+@media (max-width: 768px) {
+    .main {
+        padding: 1.75rem;
+    }
+
+    .score-card h1 {
+        font-size: 2.6rem;
+    }
+}
